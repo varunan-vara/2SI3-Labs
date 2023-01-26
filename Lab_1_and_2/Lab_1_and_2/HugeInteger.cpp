@@ -1,64 +1,76 @@
 #include "HugeInteger.h"
 #include <string>
 #include <cmath>
+#include <cstdlib>
 
 HugeInteger::HugeInteger(const std::string& val) {
 	// Goal: Store each digit as a char (ASCII Value) and manipulate this value
 	// for functions and operations
 	// Store length of val, set vars
-	std::cout << val << "\n\n\n\n\n";
-	size = val.length(); int i = 0;
+	// std::cout << "Input: " << val << std::endl;
+	size = val.length(); int i,x;
+	// Check for zero size
+	if (size < 1) {
+		throw std::invalid_argument("The input string has a size less than 1");
+	}
 	//Allocate Space
 	num = new char[size];
 
 	// Check for negatives
-	isNegative = (val.at(0) == '-');
-	if (isNegative) {
-		i++;
-	}
+	isNegative = (val[0] == '-');
 
-	for (i = i; i < size; i++) {
+	for (i = 0; i < size; i++) {
+		// x is the value that needs to be filled in, accounting for the minus sign
+		x = (isNegative) ? i + 1 : i;
+		// Avoid assignment error
+		if (x >= size) {
+			break;
+		}
 		// If the ascii value of the input is less than or greater than the values for '0' 
 		// and '9', then throw an error
-		if ((int)val.at(i) > 57 || (int)val.at(i) < 48) {
+		if (val[x] > 57 || val[x] < 48) {
+			delete num;
 			throw std::invalid_argument("The inputted string has characters that are not digits (ie. 0, 1, ..., 9)");
 		}
-		*(num + i) = val.at(i);
+		//  Assign value
+		num[i] = val[x];
 	}
+	// Readjust size for negative numbers
 	if (isNegative) {
 		size--;
 	}
+	// std::cout << "Output: " << num << std::endl;
 }
 
 HugeInteger::HugeInteger(int n) {
-	// Convert each digit into a char, then store it similar to the above constructor
-	// Initialize a counter
-	int counter = 0, i;
-	std::string holder = "";
-
-	// Find the remainder of the value at 10 (this is the last digit)
-	// Then divide by 10 - now the loop has progressed to the next digit
-	// Made into a string first, as it is easier to allocate space for a a char array
-	while (n > 0) {
-		int digit = n % 10;
-		holder = std::to_string(digit) + holder;
-		n = n / 10;
-		counter++;
+	// Check if number is invalid
+	if (n < 1) {
+		throw std::invalid_argument("The inputted integer is equal to 0.");
 	}
-	delete &holder;
-
-	// Follow the first constructor method
-	num = new char[size];
-	size = holder.length();
-	for (i = 0; i < size; i++) {
-		*(num + i) = holder.at(i);
+	// Allocate char array
+	num = new char[n];
+	// Make sure the first value is not 0 (set random idea from 0 - 8, then add 1)
+	num[0] = (char)(std::rand() % 9) + 49; // <-- 1 + 48
+	for (int i = 1; i < n; i++) {
+		// Address any digit for the rest
+		num[i] = (char)(std::rand() % 10) + 48;
 	}
+
+	size = n;
+	isNegative = 0;
 }
 
 HugeInteger HugeInteger::add(const HugeInteger& h) {
 	char* adderVal = h.num;
 	char* currentVal = num;
 	// ^ To ensure the num in this class isn't affected
+	// 
+	// Dealing with negatives:
+	// If:
+	// x + y   -> add(x,y)
+	// -x + y  -> subtract(y,x)
+	// x + -y  -> subtract(x,y)
+	// -x + -y -> 0 - add(x,y)
 	// 
 	// Goal: add the ASCII values together. ('0' = 48, '9' = 57). Deal with overflows.
 	// Find the minimum number of digits of the two numbers: these digits  will be
@@ -95,16 +107,18 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 		}
 		adderVal = tempHolder;
 	}
+	// std::cout << "Value 1: " << currentVal << ", Value 2: " << adderVal << std::endl;
 
 	// Note: use the maximum of the two numbers for future loops
 	int maxNum = (h.size > size) ? h.size : size;
+	int asciiVal;
 
 	// 2. Add the ASCII values (one can remain as the native ASCII, the other has to be 
 	// subtracted. ('0' = 48, '9' = 57)
 	int i;
 	for (i = maxNum - 1; i >= 0; i--) {
 		// Extract ASCII value (subtract '0' from one of the values)
-		int asciiVal = (int)currentVal[i] + (int)adderVal[i] - 48;
+		asciiVal = (int)currentVal[i] + (int)adderVal[i] - 48;
 		// If value is above '9', carry one digit over
 		if (asciiVal > 57) {
 			asciiVal = asciiVal - 10;
@@ -127,6 +141,9 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 				currentVal[i - 1] = currentVal[i - 1] + 1;
 			}
 		}
+		else {
+			currentVal[i] = asciiVal;
+		}
 	}
 
 	// Convert to string (because there is no null value) - could be done with char array too
@@ -138,7 +155,12 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 }
 
 HugeInteger HugeInteger::subtract(const HugeInteger& h) {
-	// TODO
+	// Dealing with negatives
+	// If:
+	// x - y   = subtract(x,y)
+	// -x - y  = 0 - (add(x,y))
+	// x - -y  = add(x,y)
+	// -x - -y = subtract(y,z)
 	return HugeInteger("");
 }
 
@@ -154,13 +176,12 @@ int HugeInteger::compareTo(const HugeInteger& h) {
 
 std::string HugeInteger::toString() {
 	// Ensure that the last value is a null
-	std::string returnval; int i = 0, max=size;
+	std::string returnval = ""; int i = 0;
 	if (isNegative) {
 		i++;
-		returnval = "-";
-		max++;
+		returnval = returnval + (char) 45;
 	}
-	for (i = 0; i < max; i++) {
+	for (i = 0; i < size; i++) {
 		returnval = returnval + num[i];
 	}
 	return returnval;
