@@ -1,0 +1,7 @@
+﻿  Lab_1_and_2.cpp
+  TestHugeInteger.cpp
+C:\Users\varun\Desktop\Projects\Eng\2SI3-Labs\Lab_1_and_2\Lab_1_and_2\TestHugeInteger.cpp(11,29): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\varun\Desktop\Projects\Eng\2SI3-Labs\Lab_1_and_2\Lab_1_and_2\TestHugeInteger.cpp(1508,38): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\varun\Desktop\Projects\Eng\2SI3-Labs\Lab_1_and_2\Lab_1_and_2\TestHugeInteger.cpp(1538,34): warning C4018: '<=': signed/unsigned mismatch
+  Generating Code...
+  Lab_1_and_2.vcxproj -> C:\Users\varun\Desktop\Projects\Eng\2SI3-Labs\Lab_1_and_2\x64\Debug\Lab_1_and_2.exe
