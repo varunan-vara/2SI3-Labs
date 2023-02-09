@@ -1,6 +1,5 @@
 #include <iostream>
 #include "TestHugeInteger.h"
-#include "HugeInteger.h"
 
 using namespace std;
 
@@ -16,7 +15,7 @@ void test() {
 
     double totalMark = 0;
 
-    string demoLab = "Lab1"; // set to Lab1 or Lab2
+    string demoLab = "Lab2"; // set to Lab1 or Lab2
 
     TestHugeInteger thi(num_display, max_run, max_invalid_string, max_size_array);
 
@@ -37,10 +36,12 @@ void test() {
 }
 
 
-int main(void) {
-    test();
-    // HugeInteger itemOne = HugeInteger(33);
-    // HugeInteger itemTwo = HugeInteger("33");
-    // std::cout <<std::endl << "." << itemOne.toString() << "." << std::endl;
+int main() {
+
+    // test();
+    HugeInteger m = HugeInteger("-929831222883822");
+    HugeInteger n = HugeInteger("-92128912118273821931");
+    HugeInteger result = m.multiply(n);
+    cout << result.toString() << endl;
     return 0;
 }

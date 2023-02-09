@@ -1,5 +1,2 @@
-﻿  HugeInteger.cpp
-C:\Users\varun\Desktop\Projects\Eng\2SI3-Labs\Lab_1_and_2\Lab_1_and_2\HugeInteger.cpp(11,21): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  Lab_1_and_2.cpp
-  Generating Code...
+﻿  Lab_1_and_2.cpp
   Lab_1_and_2.vcxproj -> C:\Users\varun\Desktop\Projects\Eng\2SI3-Labs\Lab_1_and_2\x64\Debug\Lab_1_and_2.exe
