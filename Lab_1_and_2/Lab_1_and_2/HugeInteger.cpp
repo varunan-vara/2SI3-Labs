@@ -133,10 +133,11 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 	// NOTE: The char is not a string, since it is not followed by a null character. 
 	// Change to string at end
 	// 
+	char* tempHolder;
 	// 1. Ensure that both values have the same number of digits (add 0's to the beginning)
 	if (size < h.size) {
 		// Convert either currentVal or adderVal
-		char* tempHolder = new char[h.size];
+		tempHolder = new char[h.size];
 		int x;
 		// h.size - size = number of 0's
 		for (x = 0; x < h.size - size; x++) {
@@ -151,7 +152,7 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 	}
 	else if (size > h.size) {
 		// Same as above
-		char* tempHolder = new char[size];
+		tempHolder = new char[size];
 		int x;
 		for (x = 0; x < size - h.size; x++) {
 			tempHolder[x] = '0';
@@ -295,6 +296,7 @@ HugeInteger HugeInteger::subtract(const HugeInteger& h) {
 	// Reassign num to avoid changing current private members
 	char* currentVal = num;
 	char* subtractVal = h.num;
+	char* tempVal;
 
 	// Assign 0's to begginning of char array if smaller than max
 	if (size > h.size) {
@@ -355,7 +357,7 @@ HugeInteger HugeInteger::multiply(const HugeInteger& h) {
 		reversedThis[i] = num[size - i - 1];
 	}
 	
-	char* reversedH = new char[size];
+	char* reversedH = new char[h.size];
 	for (i = 0; i < h.size; i++) {
 		reversedH[i] = h.num[h.size - i - 1];
 	}
@@ -382,6 +384,9 @@ HugeInteger HugeInteger::multiply(const HugeInteger& h) {
 		else isFirstDigit = 0;
 		returnVal = returnVal + returnValwithZero[i];
 	}
+	
+	delete[] reversedThis;
+	delete[] reversedH;
 
 	HugeInteger returnInteger = HugeInteger(returnValwithZero);
 	returnInteger.isNegative = relNegative;
@@ -389,21 +394,31 @@ HugeInteger HugeInteger::multiply(const HugeInteger& h) {
 }
 
 int HugeInteger::compareTo(const HugeInteger& h) {
-	// If one of the numbers has more digits, the answer is obvious
-	if (size > h.size) {
-		return 1;
-	}
-	else if (h.size < size) {
+	int multiplyingfactor = 1;
+	if (isNegative && !h.isNegative) {
 		return -1;
 	}
-	else {
+	else if (!isNegative && h.isNegative) {
+		return 1;
+	}
+	else if (isNegative && h.isNegative) {
+		multiplyingfactor = -1;
+	}
+	// If one of the numbers has more digits, the answer is obvious
+	if (size > h.size) {
+		return 1 * multiplyingfactor;
+	}
+	else if (h.size > size) {
+		return -1 * multiplyingfactor;
+	}
+	else if (size == h.size){
 		// For one's with the same length, check each digit, and return 
-		for (int i = 0; i > size; i++) {
+		for (int i = 0; i < size; i++) {
 			if (num[i] > h.num[i]) {
-				return 1;
+				return 1 * multiplyingfactor;
 			}
 			else if (num[i] < h.num[i]) {
-				return -1;
+				return -1 * multiplyingfactor;
 			}
 		}
 	}

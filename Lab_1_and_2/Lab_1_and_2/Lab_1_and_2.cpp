@@ -38,9 +38,9 @@ void test() {
 
 int main() {
 
-    // test();
-    HugeInteger m = HugeInteger("-929831222883822");
-    HugeInteger n = HugeInteger("-92128912118273821931");
+    test();
+    HugeInteger m = HugeInteger("12");
+    HugeInteger n = HugeInteger("124");
     HugeInteger result = m.multiply(n);
     cout << result.toString() << endl;
     return 0;
