@@ -4,6 +4,7 @@ A repository I used to manage my coursework for the course: COMPENG 2SI3 - Data 
 
 Currently Stored: 
  - Labs 1 & 2 (both are same parts of one cumulative lab)
+ - Lab 3 (Stored under Lab_3_alt - Lab 3 DOES NOT WORK)
 
 
 ### Approach for Lab 1

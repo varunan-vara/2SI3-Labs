@@ -1,7 +1,18 @@
 #include <iostream>
 #include "TestHugeInteger.h"
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
+
+void test();
+void runTimeTest();
+
+int main() {
+
+    test();
+    return 0;
+}
 
 void test() {
     // when test failed, the size of number <= NUM_DISPLAY, display the number
@@ -35,13 +46,30 @@ void test() {
     cout << "******************************" << endl;
 }
 
+void runTimeTest() {
 
-int main() {
+    int MAXNUMINTS = 100;
+    int MAXRUN = 100;
 
-    test();
-    HugeInteger m = HugeInteger("12");
-    HugeInteger n = HugeInteger("124");
-    HugeInteger result = m.multiply(n);
-    cout << result.toString() << endl;
-    return 0;
+    system_clock::time_point startTime, endTime;
+    double runTime = 0.0;
+    double durationMs = 0.0;
+    int n = 500;
+    for (int numInts = 0; numInts < MAXNUMINTS; numInts++) {
+        HugeInteger huge1(n); //creates a random integer of n digits
+        HugeInteger huge2(n); //creates a random integer of n digits
+        startTime = system_clock::now();
+        for (int numRun = 0; numRun < MAXRUN; numRun++) {
+            HugeInteger huge3 = huge1.add(huge2);
+        }
+        endTime = system_clock::now();
+        durationMs = (duration<double, std::milli>(endTime - startTime)).count();
+        runTime += durationMs / ((double)MAXRUN);
+    }
+
+    runTime = runTime / ((double)MAXNUMINTS);
+    std::cout << "Run Time: " << runTime << std::endl;
 }
+
+
+
