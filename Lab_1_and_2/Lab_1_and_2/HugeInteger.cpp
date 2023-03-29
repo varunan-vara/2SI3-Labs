@@ -29,7 +29,6 @@ HugeInteger::HugeInteger(const std::string& val) {
 		// If the ascii value of the input is less than or greater than the values for '0' 
 		// and '9', then throw an error
 		if (val[x] > 57 || val[x] < 48) {
-			delete num;
 			std::string error = "The inputted string has characters that are not digits (ie. 0, 1, ..., 9). Inputted Value: " + val + ";\tThis value is " + ((isNegative) ? "negative." : "not negative.");
 			throw std::invalid_argument(error);
 		}
@@ -60,9 +59,21 @@ HugeInteger::HugeInteger(int n) {
 	isNegative = 0;
 }
 
+//HugeInteger::~HugeInteger() {
+//	delete[] num;
+//}
+
 HugeInteger HugeInteger::add(const HugeInteger& h) {
-	char* adderVal = h.num;
-	char* currentVal = num;
+
+	char* adderVal = new char[h.size];
+	char* currentVal = new char[size];
+
+	for (int x = 0; x < size; x++) {
+		currentVal[x] = num[x];
+	}
+	for (int y = 0; y < h.size; y++) {
+		adderVal[y] = h.num[y];
+	}
 
 /*   std::string tempVal = ""; int o;
 	 for (o = 0; o < h.size; o++) {
@@ -90,7 +101,7 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 		// Convert the input HugeInteger value into a non negative value
 		std::string nonHVal = ""; int i;
 		for (i = 0; i < h.size; i++) {
-			nonHVal = nonHVal + h.num[i];
+			nonHVal = nonHVal + adderVal[i];
 		}
 		// Create the new HugeInteger value
 		HugeInteger nonH = HugeInteger(nonHVal);
@@ -105,7 +116,7 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 			// Convert into new HugeInteger
 			std::string newHVal = ""; int i;
 			for (i = 0; i < h.size; i++) {
-				newHVal = newHVal + h.num[i];
+				newHVal = newHVal + adderVal[i];
 			}
 			// Make new HugeInteger value
 			HugeInteger newH = HugeInteger(newHVal);
@@ -118,7 +129,7 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 			// Convert the input HugeInteger value into a non negative value
 			std::string nonHVal = ""; int i;
 			for (i = 0; i < h.size; i++) {
-				nonHVal = nonHVal + h.num[i];
+				nonHVal = nonHVal + adderVal[i];
 			}
 			// Create the new HugeInteger value
 			HugeInteger nonH = HugeInteger(nonHVal);
@@ -133,11 +144,10 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 	// NOTE: The char is not a string, since it is not followed by a null character. 
 	// Change to string at end
 	// 
-	char* tempHolder = new char;
+	char* tempHolder;
 	// 1. Ensure that both values have the same number of digits (add 0's to the beginning)
 	if (size < h.size) {
 		// Convert either currentVal or adderVal
-		delete tempHolder;
 		tempHolder = new char[h.size];
 		int x;
 		// h.size - size = number of 0's
@@ -167,7 +177,7 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 
 	// Note: use the maximum of the two numbers for future loops
 	int maxNum = (h.size > size) ? h.size : size;
-	int asciiVal;
+	int asciiVal = 0;
 
 	// 2. Add the ASCII values (one can remain as the native ASCII, the other has to be 
 	// subtracted. ('0' = 48, '9' = 57)
@@ -210,7 +220,6 @@ HugeInteger HugeInteger::add(const HugeInteger& h) {
 
 	delete[] currentVal;
 	delete[] adderVal;
-	delete[] tempHolder;
 	return HugeInteger(stringVal);
 }
 
@@ -221,6 +230,18 @@ HugeInteger HugeInteger::subtract(const HugeInteger& h) {
 	}
 	HugeInteger tempH = HugeInteger(tempVal);
 	tempH.isNegative = h.isNegative;
+	// Reassign num to avoid changing current private members
+	char* currentVal = new char[size];
+	char* subtractVal = new char[h.size];
+
+	for (int x = 0; x < size; x++) {
+		currentVal[x] = num[x];
+	}
+	for (int y = 0; y < h.size; y++) {
+		subtractVal[y] = h.num[y];
+	}
+
+	// std::cout << "currentVal: " << currentVal << std::endl << "subtractVal: " << subtractVal << std::endl;
 
 	// std::cout << "Testing: " << toString() << " - " << tempH.toString() << std::endl;
 	// Dealing with negatives
@@ -235,7 +256,7 @@ HugeInteger HugeInteger::subtract(const HugeInteger& h) {
 		// Create new value for h
 		std::string newHVal = ""; int i;
 		for (i = 0; i < h.size; i++) {
-			newHVal = newHVal + h.num[i];
+			newHVal = newHVal + subtractVal[i];
 		}
 		HugeInteger newH = HugeInteger(newHVal);
 		newH.isNegative = 0;
@@ -254,9 +275,9 @@ HugeInteger HugeInteger::subtract(const HugeInteger& h) {
 	}
 	else if (h.isNegative) {
 		// Create new value for h
-		std::string newHVal = ""; int i;
+		std::string newHVal = ""; int i;	
 		for (i = 0; i < h.size; i++) {
-			newHVal = newHVal + h.num[i];
+			newHVal = newHVal + subtractVal[i];
 		}
 		HugeInteger newH = HugeInteger(newHVal);
 		newH.isNegative = 0;
@@ -277,30 +298,22 @@ HugeInteger HugeInteger::subtract(const HugeInteger& h) {
 	if (h.size > size) { reorg = 1; }
 	if (h.size == size) {
 		int t = 0;
-		while (h.num[t] == num[t]) {
+		while (subtractVal[t] == currentVal[t]) {
 			t++;
 		}
-		if (h.num[t] > num[t]) {
+		if (subtractVal[t] > currentVal[t]) {
 			reorg = 1;
 		}
 	}
 
 	if (reorg) {
 		// Return 0 - subtract(y,x)
+		// std::cout << "Reorg" << std::endl;
 		// Create new value for h
-		std::string newHVal = ""; int i;
-		for (i = 0; i < h.size; i++) {
-			newHVal = newHVal + h.num[i];
-		}
-		HugeInteger newH = HugeInteger(newHVal);
-		// Create new value for this
-		HugeInteger returnval = newH.subtract(HugeInteger(toString()));
-		returnval.isNegative = 1;
-		return returnval;
+		char* temper = currentVal;
+		char* currentVal = subtractVal;
+		char* subtractVal = currentVal;
 	}
-	// Reassign num to avoid changing current private members
-	char* currentVal = num;
-	char* subtractVal = h.num;
 
 	// Assign 0's to begginning of char array if smaller than max
 	if (size > h.size) {
@@ -309,10 +322,11 @@ HugeInteger HugeInteger::subtract(const HugeInteger& h) {
 			tempVal[x] = '0';
 		}
 		for (int y = 0; y < h.size; y++) {
-			tempVal[x + y] = h.num[y];
+			tempVal[x + y] = subtractVal[y];
 		}
 		subtractVal = tempVal;
 	}
+	// std::cout << "Made it here 1" << std::endl;
 	// Run the subtract algorithm, similar to add, work with ASCII characters
 	// ('0' = 48, '9' = 57)
 	int asciiVal;
@@ -326,15 +340,21 @@ HugeInteger HugeInteger::subtract(const HugeInteger& h) {
 		}
 		currentVal[i] = asciiVal;
 	}
+	// std::cout << "Made it here 2" << std::endl;
 	// Convert to string (because there is no null value) - could be done with char array too
 	std::string stringVal = "";
 	for (int n = 0; n < size; n++) {
 		stringVal = stringVal + currentVal[n];
 	}
-
+	// std::cout << "Made it here 3" << std::endl;
+	HugeInteger returnval = HugeInteger(stringVal);
+	if (reorg) {
+		returnval.isNegative = 1;
+	}
 	delete[] currentVal;
 	delete[] subtractVal;
-	return HugeInteger(stringVal);
+	// std::cout << "Made it here 4" << std::endl;
+	return returnval;
 }
 
 HugeInteger HugeInteger::multiply(const HugeInteger& h) {

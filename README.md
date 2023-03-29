@@ -12,4 +12,8 @@ Currently Stored:
 To store more than 64 bits, an ASCII character was used to store each digit. This could have also been done using binary values. 
 When an std::string is inputted, it is converted to a char array, and this array is manipulated for any relevant functions. 
 The class stores number of digits, char array, and a bool to indicate whether the function is negative. 
-This allows for future functions to be implimented easier. 
+This allows for future functions to be implemented easier. 
+
+### Approach for LAb 2
+
+The strategy stayed largely the same from the previous lab, where items were accessed

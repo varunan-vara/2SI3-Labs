@@ -12,6 +12,7 @@ public:
 	// Required methods
 	HugeInteger(const std::string& val);
 	HugeInteger(int n);
+	// ~HugeInteger();
 	HugeInteger add(const HugeInteger& h);
 	HugeInteger subtract(const HugeInteger& h);
 	HugeInteger multiply(const HugeInteger& h);
